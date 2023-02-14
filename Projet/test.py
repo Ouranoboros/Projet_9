@@ -30,7 +30,7 @@ for card in cards :
     print(title)
 
     object1 = card.find_all("div",{'class':"Text_Text_text Vehiculecard_Vehiculecard_characteristicsItems Text_Text_body2"})
-    for test in object1:
+    for test in Sbject1:
         print (test.get_text())
 
     price = card.find("span",{'class':"Text_Text_text Vehiculecard_Vehiculecard_price Text_Text_subtitle2"})

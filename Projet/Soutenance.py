@@ -17,18 +17,25 @@ request= requests.get(url, timeout=5).text
 #Passage dans BeautifulSoup
 soup = BeautifulSoup(request,'html.parser')
 
-#Récupération des données
+#Récupération des blocs de données
 cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody')
-print (cards)
 
+#Récupération des données
 for card in cards :
     title = card.find('h3','Text_Text_subtitle2').get_text()
-    print(title)
+    test = title.split('PEUGEOT',1)
+    print(test)
+    
     motor = card.find('div', 'Text_Text_body2').get_text()
     print(motor)
+    
     characteristics = card.find_all('div', 'Text_Text_text Vehiculecard_Vehiculecard_characteristicsItems Text_Text_body2')
     for characteristic in characteristics : 
         print(characteristic.get_text())
+    
     price = (card.find('span', 'Text_Text_text Vehiculecard_Vehiculecard_price Text_Text_subtitle2').get_text())
-    print(type(price))
-    print (price)
+    price_str =price.replace("€","")
+    price_int = int(price_str.replace(" ",""))
+    print (price_int)
+    
+    print ('\n','--------------', '\n')
