@@ -17,15 +17,12 @@ def request(brand_name, page_number):
     request= requests.get(url_main, timeout=5).text
     return request
 
-def parsing(brand_name, page_number):
+def parsing(brand_name, page_number, scrapped_items, i):
     request_made = request(brand_name, page_number)
     
     soup = BeautifulSoup(request_made,'html.parser')
     
-    cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody')
-    
-    i=1
-    scrapped_items = []
+    cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody')    
     
     for card in cards :
        title = card.find('h3','Text_Text_subtitle2').get_text()
@@ -52,18 +49,22 @@ def parsing(brand_name, page_number):
        scrapped_items.append(item)
        i += 1
 
-    return scrapped_items
+    return scrapped_items, i
 
-def csv_editing(brand_name, page_number):
-    scrapped_items = parsing(brand_name, page_number)
+def csv_editing(scrapped_items):
     df_write = pd.DataFrame(scrapped_items)
     df_write.to_csv("data.csv", index=False, header=['Index', 'Brand', 'Model', 'Motor', 'Year', 'Mileage', 'Gear', 'Fuel', 'Price'])
 
 def main() :
     brand_name = "PEUGEOT"
     page_number = 1
+    scrapped_items = []
+    i = 1
+
     while page_number <= 5 :
-        csv_editing(brand_name, page_number)
+        scrapped_items, i = parsing(brand_name, page_number, scrapped_items, i)
         page_number += 1
+    
+    csv_editing(scrapped_items)
 
 main()
