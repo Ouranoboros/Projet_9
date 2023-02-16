@@ -36,39 +36,46 @@ def parsing(brand_name, page_number, scrapped_items, i):
     '''
     Fonction chargée de récupérer les informations qui nous sont utiles dans la page.
     '''
-
     request_made = request(brand_name, page_number) #Récupère la requête effectuée par la fonction 'request'.
     
     soup = BeautifulSoup(request_made,'html.parser') #Passage dans BeautifulSoup.
     
-    cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody') #Récupération de toutes les cartes de voiture d'une page.
-    
-    for card in cards : #Exécution pour chaque carte :
-       title = card.find('h3','Text_Text_subtitle2').get_text() #Récupération du "Titre" de la carte.
-       model_to_edit = title.split(brand_name) #Suppression du nom de la marque, afin de récupérer uniquement le modèle.
-       model = model_to_edit[-1].strip() #Suppréssion des espaces. 
+    to_edit = soup.find('span', 'Text_Text_headline2').get_text()
+    result_number = forming(to_edit)
 
-       motor = card.find('div', 'Text_Text_body2').get_text() #Récupération de la référence moteur.
+    if result_number == 0 : 
+        print("Les paramètres spécifiés ne retournent aucun résultat !")
+        exit()
+   
+    else :  
+        cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody') #Récupération de toutes les cartes de voiture d'une page.
+
+        for card in cards : #Exécution pour chaque carte :
+           title = card.find('h3','Text_Text_subtitle2').get_text() #Récupération du "Titre" de la carte.
+           model_to_edit = title.split(brand_name) #Suppression du nom de la marque, afin de récupérer uniquement le modèle.
+           model = model_to_edit[-1].strip() #Suppréssion des espaces. 
+
+           motor = card.find('div', 'Text_Text_body2').get_text() #Récupération de la référence moteur.
        
-       characteristics = card.find_all('div', 'Text_Text_text Vehiculecard_Vehiculecard_characteristicsItems Text_Text_body2') #Récupération du "bloc" de charactéristiques.
-       elements = [] # Création de la liste des éléments de se "bloc".
-       for characteristic in characteristics : #Itération de chaque caractéristique.
-           elements.append(characteristic.get_text()) #Ajout de chaque caractéristique à la liste des éléments.
+           characteristics = card.find_all('div', 'Text_Text_text Vehiculecard_Vehiculecard_characteristicsItems Text_Text_body2') #Récupération du "bloc" de charactéristiques.
+           elements = [] # Création de la liste des éléments de se "bloc".
+           for characteristic in characteristics : #Itération de chaque caractéristique.
+               elements.append(characteristic.get_text()) #Ajout de chaque caractéristique à la liste des éléments.
 
-       year = int(elements[0]) #Association de chaque caractéristique à une variable.
-       to_edit = elements[1] #Association de chaque caractéristique à une variable.
-       mileage = forming(to_edit) #Récupération du résultat après mise en forme.
-       gear = elements[2] #Association de chaque caractéristique à une variable.
-       fuel = elements[3] #Association de chaque caractéristique à une variable.
+           year = int(elements[0]) #Association de chaque caractéristique à une variable.
+           to_edit = elements[1] #Association de chaque caractéristique à une variable.
+           mileage = forming(to_edit) #Récupération du résultat après mise en forme.
+           gear = elements[2] #Association de chaque caractéristique à une variable.
+           fuel = elements[3] #Association de chaque caractéristique à une variable.
        
-       to_edit = (card.find('span', 'Text_Text_text Vehiculecard_Vehiculecard_price Text_Text_subtitle2').get_text()) #Récupération du prix.
-       price = forming(to_edit) #Récupération du résultat après mise en forme.
+           to_edit = (card.find('span', 'Text_Text_text Vehiculecard_Vehiculecard_price Text_Text_subtitle2').get_text()) #Récupération du prix.
+           price = forming(to_edit) #Récupération du résultat après mise en forme.
 
-       item = [i, brand_name, model, motor, year, mileage, gear, fuel, price] #Enregistrement de toutes les carastéristiques dans une liste corréspondant à une référence.
-       scrapped_items.append(item) #Ajout de cette référence à la liste global.
-       i += 1
+           item = [i, brand_name, model, motor, year, mileage, gear, fuel, price] #Enregistrement de toutes les carastéristiques dans une liste corréspondant à une référence.
+           scrapped_items.append(item) #Ajout de cette référence à la liste global.
+           i += 1
 
-    return scrapped_items, i #Renvoie les variables modifiées.
+        return scrapped_items, i #Renvoie les variables modifiées.
 
 def csv_editing(scrapped_items):
     '''
