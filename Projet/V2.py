@@ -21,7 +21,7 @@ def url(brand_name,page_number):
     Fonction chargée de la construction de l'Url du site de la centrale.
     '''
     url_to_edit = """https://www.lacentrale.fr/listing?energies={energy}&makesModelsCommercialNames={brand}&mileageMax={km_max}&mileageMin={km_min}&priceMax={price_max}&priceMin={price_min}yearMax={year_max}&yearMin={year_min}&options=&page={page}"""
-    url = url_to_edit.format(energy = "ess", brand = brand_name, km_max = 250000, km_min = 10000, price_max = 60000, price_min = 10000, year_max = 2022, year_min = 2019, page = page_number)
+    url = url_to_edit.format(energy = "ess", brand = brand_name, km_max = 250000, km_min = 10000, price_max = 60000, price_min = 10, year_max = 2022, year_min = 2019, page = page_number)
     return url
 
 def request(brand_name, page_number):
@@ -40,14 +40,14 @@ def parsing(brand_name, page_number, scrapped_items, i):
     
     soup = BeautifulSoup(request_made,'html.parser') #Passage dans BeautifulSoup.
     
-    to_edit = soup.find('span', 'Text_Text_headline2').get_text()
-    result_number = forming(to_edit)
+    to_edit = soup.find('span', 'Text_Text_headline2').get_text() #Récupération du nombre de résultats correspondant à la recherche effectué.
+    result_number = forming(to_edit) #Récupération du résultat après mise en forme.
 
-    if result_number == 0 : 
-        print("Les paramètres spécifiés ne retournent aucun résultat !")
-        exit()
+    if result_number == 0 : # Si le nombre de résultats est égal à 0.
+        print("Les paramètres spécifiés ne retournent aucun résultat !") #Message pour l'utilisateur
+        exit() #Arrêt du programme.
    
-    else :  
+    else : #Sinon, on récupère les différentes informations.
         cards = soup.find_all('div','Vehiculecard_Vehiculecard_cardBody') #Récupération de toutes les cartes de voiture d'une page.
 
         for card in cards : #Exécution pour chaque carte :
@@ -94,7 +94,7 @@ def main() :
     scrapped_items = []
     i = 1
 
-    while page_number <= 8 :
+    while page_number <= 10 :
         scrapped_items, i = parsing(brand_name, page_number, scrapped_items, i)
         page_number += 1
     

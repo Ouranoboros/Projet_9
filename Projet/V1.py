@@ -32,7 +32,6 @@ for card in cards :
     test = title.split("PEUGEOT")
     test_edit = test[-1].strip()
     print(test_edit)
-
     
     motor = card.find('div', 'Text_Text_body2').get_text()
     print(motor)
@@ -66,8 +65,8 @@ for card in cards :
     item = [i,title,test_edit,motor,year,mileage_int,gear,fuel,price_int]
     scrapped_items.append(item)
     i += 1
-print(scrapped_items)
-
+    print(scrapped_items)
+    
 # Conversion d'un tableau en dataframe puis stockage dans un csv
 df_write = pd.DataFrame(scrapped_items)
 df_write.to_csv("data.csv", index=False, header=['index', 'brand', 'model', 'motor', 'year', 'mileage', 'gear', 'fuel', 'price'])
